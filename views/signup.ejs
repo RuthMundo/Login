@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Red Social - Registro</title>
+    <link rel="stylesheet" href="/public/css/main.min.css">
+    <link rel="stylesheet" href="/public/css/style.css">
+    <link rel="stylesheet" href="/public/css/color.css">
+    <link rel="stylesheet" href="/public/css/responsive.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f3f4f6;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        .theme-layout {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .login-reg-bd {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            padding: 40px;
+            width: 100%;
+            max-width: 400px;
+        }
+        .log-title {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 24px;
+            color: #4a4a4a;
+        }
+        .form-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .form-group label {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            transition: 0.2s;
+            color: #aaa;
+        }
+        .form-group input:focus + label,
+        .form-group input:not(:placeholder-shown) + label {
+            top: -10px;
+            left: 10px;
+            font-size: 12px;
+            color: #007bff;
+        }
+        .form-radio {
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .form-radio label {
+            display: flex;
+            align-items: center;
+        }
+        .form-radio input {
+            margin-right: 10px;
+        }
+        .submit-btns {
+            text-align: center;
+        }
+        .submit-btns button {
+            background: #007bff;
+            color: #fff;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .submit-btns button:hover {
+            background: #0056b3;
+        }
+        a {
+            display: block;
+            text-align: center;
+            margin-top: 15px;
+            color: #007bff;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="theme-layout">
+        <div class="login-reg-bd">
+            <div class="log-reg-area sign">
+                <h2 class="log-title">Registro</h2>
+                <form onsubmit="return doRegister(this);">
+                    <div class="form-group">
+                        <input type="text" required name="name" placeholder=" " />
+                        <label class="control-label">Nombre Completo</label>
+                    </div>
+
+                    <div class="form-group">
+                        <input type="text" required name="username" placeholder=" " />
+                        <label class="control-label">Nombre de Usuario</label>
+                    </div>
+
+                    <div class="form-group"> 
+                        <input type="email" id="email" required name="email" placeholder=" " />
+                        <label class="control-label">Email</label>
+                    </div>
+
+                    <div class="form-group">
+                        <input type="password" required name="password" placeholder=" " />
+                        <label class="control-label">Contraseña</label>
+                    </div>
+
+                    <div class="form-radio">
+                        <div class="radio">
+                            <label>
+                                <input type="radio" name="gender" value="Male" checked />
+                                <i class="check-box"></i> Hombre
+                            </label>
+                        </div>
+                        <div class="radio">
+                            <label>
+                                <input type="radio" name="gender" value="Female" />
+                                <i class="check-box"></i> Mujer
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <a href="/login">¿Ya tienes una cuenta?</a>
+                    
+                    <div class="submit-btns">
+                        <button class="mtr-btn signup" name="submit" type="submit">
+                            <span>Registrar</span>
+                        </button>
+                    </div>
+
+                    <div class="container my-5">
+                        <div class="card social-block">
+                            <div class="card-body" style="text-align: center !important;">
+                                <a class="btn btn-block btn-social btn-google" href="/auth/google" role="button">
+                                    <i class="fab fa-google"></i>
+                                    Sign Up with Google
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </form>
+            </div>
+        </div>
+    </div>
+   
+
+
+    <script>
+        function doRegister(form) {
+            form.querySelector('button[name="submit"]').setAttribute("disabled", "disabled");
+            form.querySelector('button[name="submit"]').innerHTML = "<span>Cargando...</span>";
+
+            var ajax = new XMLHttpRequest();
+            ajax.open("POST", "/signup", true);
+
+            ajax.onreadystatechange = function() {
+                if (this.readyState === 4 && this.status === 200) {
+                    form.querySelector('button[name="submit"]').removeAttribute("disabled");
+                    form.querySelector('button[name="submit"]').innerHTML = "<span>Registrar</span>";
+
+                    var response = JSON.parse(this.responseText);
+                    alert(response.message);
+
+                    if (response.status === "success") {
+                        window.location.href = "/login";
+                    }
+                }
+            };
+            ajax.send(new FormData(form));
+            return false;
+        }
+        function validateEmail() {
+            const emailInput = document.getElementById('email');
+            const errorMessage = document.getElementById('error-message');
+            const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+            if (!emailPattern.test(emailInput.value)) {
+                errorMessage.style.display = 'block'; // Muestra el mensaje de error
+                return false; // Evita el envío del formulario
+            } else {
+                errorMessage.style.display = 'none'; // Oculta el mensaje de error
+                return true; // Permite el envío del formulario
+            }
+        }
+    </script>
+</body>
+</html>

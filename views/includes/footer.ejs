@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Website</title>
+    <link rel="stylesheet" href="/public/css/styles.css">
+</head>
+<body>
+
+    <footer>
+        <div class="container">
+            <div class="row">
+                Your website &copy; <%= new Date().getFullYear() %>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/public/js/jquery-3.3.1.min.js"></script>
+    <script src="/public/js/main.min.js"></script>
+    <script src="/public/js/script.js"></script>
+    <script src="/public/js/socket.io.js"></script>
+
+    <script>
+        window.user = null;
+        const socketIO = io("http://localhost:3000");
+
+        async function getUser() {
+            const accessToken = localStorage.getItem("accessToken");
+
+            if (accessToken) {
+                try {
+                    const response = await fetch("/getUser", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({ accessToken })
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.status === "success") {
+                            window.user = data.data;
+
+                            if (typeof isUpdateProfile !== "undefined" && isUpdateProfile) {
+                                showProfileData();
+                            }
+                        } else {
+                            localStorage.removeItem("accessToken");
+                        }
+                    }
+                } catch (error) {
+                    console.error("Error fetching user:", error);
+                }
+            }
+
+            showMainMenu();
+        }
+
+        function showMainMenu() {
+    const menuItems = `
+         <li><a href="/">Inicio</a></li>
+                        <li><a href="/profile">Perfil</a></li>
+                        <li><a href="/messages">Mensajes</a></li>
+                        <li><a href="/notifications">Notificaciones</a></li>
+                        <li><a href="/settings">Configuración</a></li>
+        <li><a href="/logout" onclick="return doLogout();">Logout</a></li>
+    `;
+
+    // Verifica si hay un token de acceso y modifica los elementos del menú en consecuencia
+    if (localStorage.getItem("accessToken")) {
+        // Si hay un accessToken, muestra el menú normal
+        document.getElementById("main-menu").innerHTML = menuItems;
+    } else {
+        // Si no hay accessToken, puedes ajustar los elementos aquí si es necesario
+        document.getElementById("main-menu").innerHTML = menuItems; // Aquí podrías ajustar el menú si es necesario
+    }
+}
+
+
+        function doLogout() {
+            localStorage.removeItem("accessToken");
+            return true;
+        }
+
+        window.onload = function() {
+            getUser();
+        };
+
+        window.onerror = function(file, line, error) {
+            alert(`Error: ${file} ${line} - ${error}`);
+        };
+    </script>
+</body>
+</html>

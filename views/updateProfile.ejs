@@ -1,0 +1,81 @@
+<%- include("includes/header") %>
+
+<section>
+    <div class="feature-photo">
+        <h1>Bienvenido a la Red Social</h1>
+        <figure>
+            <img class="cover-photo" id="cover-photo" style="width: 100%; height: 700px; object-fit: cover;">
+        </figure>
+
+        <form class="edit-photo" id="form-cover-photo" onsubmit="return false;">
+            <i class="fa fa-camera-retro"></i>
+            <label class="fileContainer">
+                Editar Portada
+                <input type="file" accept="image/*" name="coverPhoto" onchange="uploadCoverPhoto();" required />
+            </label>
+        </form>
+
+        <div class="container-fluid">
+            <div class="row merged">
+                <div class="col-md-2">
+                    <div class="user-avatar">
+                        <figure>
+                            <img class="profile-image" id="profile-image" style="width: 100%; height: 150px; object-fit: cover;">
+                            <form class="edit-photo" id="form-upload-image" onsubmit="return false;">
+                                <i class="fa fa-camera-retro"></i>
+                                <label class="fileContainer">
+                                    Editar Foto de Perfil
+                                    <input type="file" accept="image/*" name="profileImage" onchange="uploadImage();" required />
+                                </label>
+                            </form>
+                        </figure>
+                    </div>
+                </div>
+                <div class="col-md-10">
+                    <div class="timeline-info">
+                        <ul>
+                            <li class="admin-name">
+                                <h5 class="user-name" style="padding: 20px 0;"></h5>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    const isUpdateProfile = true;
+
+    function showProfileData() {
+        document.querySelector(".cover-photo").src = `${mainURL}/${window.user.coverPhoto}`;
+        document.querySelector(".profile-image").src = `${mainURL}/${window.user.profileImage}`;
+    }
+    async function uploadCoverPhoto() {
+    const form = document.getElementById("form-cover-photo");
+    const formData = new FormData(form);
+    formData.append("accessToken", localStorage.getItem("accessToken"));
+
+    try {
+        const response = await fetch("/uploadCoverPhoto", {
+            method: "POST",
+            body: formData
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            document.getElementById("cover-photo").setAttribute("src", data.data);
+        } else {
+            console.error("Error en la subida de la foto:", response.statusText);
+        }
+    } catch (error) {
+        console.error("Error de red:", error);
+    }
+
+    return false; // Para evitar que el formulario se envíe de forma estándar
+}
+
+</script>
+
+<%- include("includes/footer") %>

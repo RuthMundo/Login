@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Red Social</title>
+    <link rel="stylesheet" href="/public/css/main.min.css">
+    <link rel="stylesheet" href="/public/css/style.css">
+    <link rel="stylesheet" href="/public/css/color.css">
+    <link rel="stylesheet" href="/public/css/responsive.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .theme-layout {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        .tpbar {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo img {
+            height: 50px;
+        }
+        .top-area {
+            display: flex;
+            align-items: center;
+        }
+        .main-menu {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            gap: 20px;
+        }
+        .main-menu li {
+            display: inline;
+        }
+        .main-menu a {
+            color: white;
+            text-decoration: none;
+            padding: 10px;
+            transition: background 0.3s;
+        }
+        .main-menu a:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+        }
+        .setting-area {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            gap: 10px;
+        }
+        .setting-area li {
+            display: inline;
+        }
+        .setting-area a {
+            color: white;
+            text-decoration: none;
+            padding: 10px;
+        }
+        #post-im-preview,
+        #post-video-preview {
+            height: 300px;
+            width: 300px;
+            object-fit: cover;
+            margin: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="theme-layout">
+        <div class="tpbar stick">
+            <div class="logo">
+                <a href="/">
+                    <img src="https://via.placeholder.com/150" alt="Logo">
+                </a>
+            </div>
+            <div class="top-area">
+                <nav>
+                    <ul class="main-menu" id="main-menu">
+                        <li><a href="/">Inicio</a></li>
+                        <li><a href="/profile">Perfil</a></li>
+                        <li><a href="/messages">Mensajes</a></li>
+                        <li><a href="/notifications">Notificaciones</a></li>
+                        <li><a href="/settings">Configuración</a></li>
+                    </ul>
+                </nav>
+               
+            </div>
+        </div>
+        <script>
+            var mainURL = "http://localhost:3000";
+        </script>
+    </div>
+</body>
+</html>

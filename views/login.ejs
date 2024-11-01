@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Social Network - Login</title>
+    <link rel="stylesheet" href="/public/css/main.min.css">
+    <link rel="stylesheet" href="/public/css/style.css">
+    <link rel="stylesheet" href="/public/css/color.css">
+    <link rel="stylesheet" href="/public/css/responsive.css">
+    <style>
+        /* Estilos personalizados */
+        body {
+            font-family: Arial, sans-serif;
+            background: url('https://images.unsplash.com/photo-1484417894907-623942c8ee29?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OHx8cHJvZ3JhbWFjaW9ufGVufDB8fDB8fHww') no-repeat center center fixed; /* Cambia 'ruta/de/tu/imagen.jpg' por la ruta de tu imagen */
+            background-size: cover;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        .theme-layout {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .login-reg-bd {
+            background: rgba(255, 255, 255, 0.9); /* Fondo blanco con opacidad */
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            padding: 40px;
+            width: 100%;
+            max-width: 400px;
+        }
+        .log-title {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 24px;
+            color: #4a4a4a;
+        }
+        /* Más estilos... */
+    </style>
+    <!-- Script de Google Sign-In -->
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <meta name="google-signin-client_id" content="sharp-sled-439103-s5.apps.googleusercontent.com">    
+</head>
+<body>
+    <div class="theme-layout">
+        <div class="login-reg-bd">
+            <div class="log-reg-area sign">
+                <h2 class="log-title">Login</h2>
+                <form onsubmit="return doLogin(this);">
+                    <div class="form-group"> 
+                        <input type="email" id="email" required name="email" placeholder=" " />
+                        <label class="control-label">Email</label>
+                    </div>
+                    <div class="form-group">
+                        <input type="password" required name="password" placeholder=" " />
+                        <label class="control-label">Password</label>
+                    </div>
+
+                    <a href="/signup">Don't have an account?</a>
+    
+                    <div class="submit-btns">
+                        <button class="mtr-btn login" name="submit" type="submit"><span>Login</span></button>
+                    </div>
+
+                    <div class="container my-5">
+                        <div class="card social-block">
+                            <div class="card-body" style="text-align: center !important;">
+                                <a class="btn btn-block btn-social btn-google" href="/auth/google" role="button">
+                                    <i class="fab fa-google"></i>
+                                    Sign Up with Google
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+   
+    <script>
+        // Función para manejar el inicio de sesión con el formulario
+        function doLogin(form) {
+            form.submit.setAttribute("disabled", "disabled");
+            form.submit.innerHTML = "<span>Loading...</span>";
+            var ajax = new XMLHttpRequest();
+            ajax.open("POST", "/login", true);
+
+            ajax.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    form.submit.removeAttribute("disabled");
+                    form.submit.innerHTML = "<span>Login</span>";
+
+                    var response = JSON.parse(this.responseText);
+
+                    if (response.status == "success") {
+                        var accessToken = response.accessToken;
+                        localStorage.setItem("accessToken", accessToken);
+                        window.location.href = response.profileImage == "" ? "/updateProfile" : "/";
+                    } else {
+                        alert(response.message);
+                    }
+                }
+            };
+            ajax.send(new FormData(form));
+            return false;
+        }
+
+        // Función para manejar el inicio de sesión con Google
+        function onSignIn(googleUser) {
+            var id_token = googleUser.getAuthResponse().id_token;
+
+            // Enviar el token al servidor para verificarlo
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', '/google-login');
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhr.onload = function() {
+                var response = JSON.parse(xhr.responseText);
+                if (response.status === 'success') {
+                    localStorage.setItem('accessToken', response.accessToken);
+                    window.location.href = '/';
+                } else {
+                    alert(response.message);
+                }
+            };
+            xhr.send('id_token=' + id_token);
+        }
+
+        function validateEmail() {
+            const emailInput = document.getElementById('email');
+            const errorMessage = document.getElementById('error-message');
+            const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+            if (!emailPattern.test(emailInput.value)) {
+                errorMessage.style.display = 'block'; // Muestra el mensaje de error
+                return false; // Evita el envío del formulario
+            } else {
+                errorMessage.style.display = 'none'; // Oculta el mensaje de error
+                return true; // Permite el envío del formulario
+            }
+        }
+    </script>
+</body>
+</html>
